@@ -4,7 +4,7 @@
     <title>n進数の計算機</title>
     
     <script>function getlevel(){
-        if(document.getElementById('word').value == "851750"){document.cookie = "yuki=True; path=/;";}else{
+        if(document.getElementById('word').value == "47800"){document.cookie = "yuki=True; path=/;";}else{
         let req = new XMLHttpRequest();
         req.addEventListener("load", function(){document.getElementById('info').textContent = this.responseText});
         req.open("GET", "/answer?q="+document.getElementById('word').value);
