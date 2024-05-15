@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: yuki-tangolevel
+    name: yuki-IPad4610-tu
     env: python
     region: Oregon
     plan: free
