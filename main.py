@@ -158,53 +158,41 @@ def check_cokie(cookie):
 
 
 
-from fastapi import FastAPI, Depends, HTTPException, status 
+from fastapi import FastAPI, Depends
 from fastapi import Response,Cookie,Request
 from fastapi.responses import HTMLResponse,PlainTextResponse
 from fastapi.responses import RedirectResponse as redirect
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 from typing import Union
-import secrets
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/css", StaticFiles(directory="./css"), name="static")
 app.mount("/word", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
-security = HTTPBasic()
 
 from fastapi.templating import Jinja2Templates
 template = Jinja2Templates(directory='templates').TemplateResponse
 
-def access_yuki(credentials: HTTPBasicCredentials = Depends(security)): #Basic認証
-    correct_username = secrets.compare_digest(credentials.username, "yuki") #ここにユーザー名
-    correct_password = secrets.compare_digest(credentials.password, "85175") #ここにパスワード
-    print("Basic認証中")
-    if not (correct_username and correct_password):
-        raise HTTPException(
-            status_code = status.HTTP_401_UNAUTHORIZED,
-            detail = "正しいユーザー名とパスワードを入力してください",
-            headers = {"WWW-Authenticate": "Basic"},
-        )
-    return True
+
+
+
+
 
 @app.get("/", response_class=HTMLResponse)
 def home(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
-    if not(response.cookies.get("yuki")):
-        return redirect("/word")
-    try:
-        access_yuki()
-    except HTTPException:
-        return redirect("/word")
-    response.set_cookie(key="yuki", value="True",max_age=7*24*60*60)
-    return template("home.html", {"request": request})
+    if check_cokie(yuki):
+        response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
+        return template("home.html",{"request": request})
+    print(check_cokie(yuki))
+    return redirect("/word")
 
 @app.get('/watch', response_class=HTMLResponse)
 def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     response.set_cookie(key="yuki", value="True",max_age=7*24*60*60)
     videoid = v
     t = get_data(videoid)
@@ -213,19 +201,22 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
 
 @app.get("/search", response_class=HTMLResponse,)
 def search(q:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     return template("search.html", {"request": request,"results":get_search(q,page),"word":q,"next":f"/search?q={q}&page={page + 1}","proxy":proxy})
 
 @app.get("/hashtag/{tag}")
 def search(tag:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     return redirect(f"/search?q={tag}")
 
 
 @app.get("/channel/{channelid}", response_class=HTMLResponse)
 def channel(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     t = get_channel(channelid)
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
@@ -241,14 +232,16 @@ def set_cokie(q:str):
 
 @app.get("/playlist", response_class=HTMLResponse)
 def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     return template("search.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy})
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
     global apis,apichannels,apicomments
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     return template("info.html",{"request": request,"Youtube_API":apis[0],"Channel_API":apichannels[0],"Comments_API":apicomments[0]})
 
@@ -266,7 +259,8 @@ def thumbnail(v:str):
 
 @app.get("/bbs",response_class=HTMLResponse)
 def view_bbs(request: Request,name: Union[str, None] = "",seed:Union[str,None]="",channel:Union[str,None]="main",verify:Union[str,None]="false",yuki: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     res = HTMLResponse(requests.get(fr"{url}bbs?name={urllib.parse.quote(name)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}",cookies={"yuki":"True"}).text)
     return res
 
@@ -281,7 +275,8 @@ def view_bbs(request: Request,t: str,channel:Union[str,None]="main",verify: Unio
 
 @app.get("/bbs/result")
 def write_bbs(request: Request,name: str = "",message: str = "",seed:Union[str,None] = "",channel:Union[str,None]="main",verify:Union[str,None]="false",yuki: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     t = requests.get(fr"{url}bbs/result?name={urllib.parse.quote(name)}&message={urllib.parse.quote(message)}&seed={urllib.parse.quote(seed)}&channel={urllib.parse.quote(channel)}&verify={urllib.parse.quote(verify)}&info={urllib.parse.quote(get_info(request))}",cookies={"yuki":"True"}, allow_redirects=False)
     if t.status_code != 307:
         return HTMLResponse(t.text)
@@ -293,7 +288,8 @@ def how_cached():
 
 @app.get("/bbs/how",response_class=PlainTextResponse)
 def view_commonds(request: Request,yuki: Union[str] = Cookie(None)):
-    
+    if not(check_cokie(yuki)):
+        return redirect("/")
     return how_cached()
 
 @app.get("/load_instance")
@@ -301,11 +297,6 @@ def home():
     global url
     url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
-@app.get("/basic-check")
-def basiccheck(yuki: Union[str] = Cookie(None)):
-    if yuki != "True":
-        return redirect("/")
-    return {"message":"Basic認証は正常に稼働しています。"}
 
 @app.exception_handler(500)
 def page(request: Request,__):
