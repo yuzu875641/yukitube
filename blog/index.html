@@ -10,6 +10,7 @@
                 req.addEventListener("load", function(){document.getElementById('info').textContent = this.responseText});
                 req.open("GET", "/answer?q="+document.getElementById('word').value);
                 req.send();
+                window.location.href = "/";
             }
         }
     </script>
