@@ -189,8 +189,7 @@ def access_yuki(credentials: HTTPBasicCredentials = Depends(security)): #Basic�
             detail = "正しいユーザー名とパスワードを入力してください",
             headers = {"WWW-Authenticate": "Basic"},
         )
-        return false
-    return true
+    return True
 
 @app.get("/", response_class=HTMLResponse)
 access = access_yuki()
