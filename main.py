@@ -193,6 +193,8 @@ def access_yuki(credentials: HTTPBasicCredentials = Depends(security)): #Basicèª
 
 @app.get("/", response_class=HTMLResponse)
 def home(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
+    if not(response.cookies.get("yuki")):
+        return redirect("/word")
     try:
         access_yuki()
     except HTTPException:
