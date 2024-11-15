@@ -158,32 +158,42 @@ def check_cokie(cookie):
 
 
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException, status 
 from fastapi import Response,Cookie,Request
 from fastapi.responses import HTMLResponse,PlainTextResponse
 from fastapi.responses import RedirectResponse as redirect
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 from typing import Union
+import secrets
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/css", StaticFiles(directory="./css"), name="static")
 app.mount("/word", StaticFiles(directory="./blog", html=True), name="static")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+security = HTTPBasic()
 
 from fastapi.templating import Jinja2Templates
 template = Jinja2Templates(directory='templates').TemplateResponse
 
-
-
-
-
+def access_yuki(credentials: HTTPBasicCredentials = Depends(security)): #Basic認証
+    correct_username = secrets.compare_digest(credentials.username, "yuki") #ここにユーザー名
+    correct_password = secrets.compare_digest(credentials.password, "85175") #ここにパスワード
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "正しいユーザー名とパスワードを入力してください",
+            headers = {"WWW-Authenticate": "Basic"},
+        )
+        return false
+    return true
 
 @app.get("/", response_class=HTMLResponse)
 def home(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
-    if check_cokie(yuki):
+    if check_cokie(access_yuki):
         response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
         return template("home.html",{"request": request})
     print(check_cokie(yuki))
