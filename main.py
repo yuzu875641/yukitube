@@ -182,6 +182,7 @@ template = Jinja2Templates(directory='templates').TemplateResponse
 def access_yuki(credentials: HTTPBasicCredentials = Depends(security)): #Basic認証
     correct_username = secrets.compare_digest(credentials.username, "yuki") #ここにユーザー名
     correct_password = secrets.compare_digest(credentials.password, "85175") #ここにパスワード
+    print("Basic認証中")
     if not (correct_username and correct_password):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
