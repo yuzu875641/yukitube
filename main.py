@@ -124,8 +124,14 @@ def get_channel(channelid):
         print("APIがチャンネルを返しませんでした")
         apichannels.append(apichannels[0])
         apichannels.remove(apichannels[0])
-        raise APItimeoutError("APIがチャンネルを返しませんでした")
+        raise APItimeoutError("APIエラー")
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
+
+def get_channel_shorts(channelid):
+    global logs
+    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/shorts"))
+    print(t)
+    return [{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["recommendedVideos"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]
 
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
@@ -227,7 +233,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     t = get_channel_shorts(channelid)
-    return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
+    return template("channel_.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
