@@ -46,9 +46,10 @@
             </div>
             <hr>
             <div id="channel-menu">
-                <a href="/">動画</a>
-                <a href="/shorts">ショート</a>
-                <a href="/playlists">プレイリスト</a>
+                <script>var pathname = location.pathname;</script>
+                <a href=`${pathname}`>動画</a>
+                <a href=`${pathname}/shorts`>ショート</a>
+                <a href=`${pathname}/playlists`>プレイリスト</a>
             </div>
             <hr>
             <div class="pure-g">
