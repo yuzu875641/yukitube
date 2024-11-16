@@ -1,11 +1,13 @@
-偽装ページが違うやつ  
+偽装ページが本当に雪です。
+[mochidukiyukimi](https://github.com/mochidukiyukimi)様にｶﾝｼｬｶﾝｼｬ
 ブログをブロックされるとき用  
 ASGIで動く  
-deployボタンは追加していく予定です  
 blog内に静的サイトを入れると認証されていない時にそのサイトが表示されます。  
 画像は使えません。  
 cookieにyuki=Trueを設定すると認証されます。  
 サーバーの起動時に掲示板の公式インスタンスに接続します。定期的にサーバーを再起動してください。  
+ちなみにこれは[vercel](https://vercel.com)でも作成できます。
+→necolianの[yukitube-vercel-runner](https://github.com/necolian/yukitube-vercel-runner)で大体他のyukiも動作させられます
 
 Renderを使用する場合の手順  
 1~4の作業をやらないと、自動でURLがyuki-tangolevel-[4桁の英数字].onrender.comになります。  
