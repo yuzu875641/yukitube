@@ -243,7 +243,7 @@ def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy,"info":get_playlist_info(list)})
+    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy,"playlist_info":get_playlist_info(list)})
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
