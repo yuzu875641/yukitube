@@ -137,6 +137,11 @@ def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
     return [{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t]
 
+def get_playlist_info(listid):
+    response = apirequest(r"/api/v1/playlists/" + urllib.parse.quote(listid) + "/")
+    data = json.loads(response)
+    return {"name": data["title"],"author": data["author"]}
+
 def get_comments(videoid):
     t = json.loads(apicommentsrequest(r"api/v1/comments/"+ urllib.parse.quote(videoid)+"?hl=jp"))["comments"]
     return [{"author":i["author"],"authoricon":i["authorThumbnails"][-1]["url"],"authorid":i["authorId"],"body":i["contentHtml"].replace("\n","<br>")} for i in t]
@@ -238,7 +243,7 @@ def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy})
+    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy,"info":get_playlist_info(list)})
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
