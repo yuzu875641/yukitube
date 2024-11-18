@@ -182,10 +182,8 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 from fastapi.templating import Jinja2Templates
 template = Jinja2Templates(directory='templates').TemplateResponse
 
-
-
-
-
+def mizissou()
+    return template("mizissou.html",{"request": request})
 
 @app.get("/", response_class=HTMLResponse)
 def home(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
@@ -228,12 +226,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
 
 @app.get("/channel/{channelid}/shorts", response_class=HTMLResponse)
-def channel(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
-    if not(check_cokie(yuki)):
-        return redirect("/")
-    response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    t = get_channel_shorts(channelid)
-    return template("channel_.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
+    mizissou()
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
