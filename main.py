@@ -205,14 +205,14 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
     videoid = v
     t = get_data(videoid)
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":proxy})
+    return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":True})
 
 @app.get("/search", response_class=HTMLResponse,)
 def search(q:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template("search.html", {"request": request,"results":get_search(q,page),"word":q,"next":f"/search?q={q}&page={page + 1}","proxy":proxy})
+    return template("search.html", {"request": request,"results":get_search(q,page),"word":q,"next":f"/search?q={q}&page={page + 1}","proxy":True})
 
 @app.get("/hashtag/{tag}")
 def search(tag:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None)):
@@ -227,7 +227,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     t = get_channel(channelid)
-    return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
+    return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
@@ -243,7 +243,7 @@ def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy,"playlist_info":get_playlist_info(list)})
+    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":True,"playlist_info":get_playlist_info(list)})
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
