@@ -226,7 +226,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
 
 @app.get("/channel/{channelid}/shorts", response_class=HTMLResponse)
-def mizissou(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None))
+def mizissou(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
     return template("mizissou.html", response_class=HTMLResponse)
 
 @app.get("/answer", response_class=HTMLResponse)
