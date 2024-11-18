@@ -182,7 +182,7 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 from fastapi.templating import Jinja2Templates
 template = Jinja2Templates(directory='templates').TemplateResponse
 
-def mizissou
+def mizissou():
     return template("mizissou.html",{"request": request})
 
 @app.get("/", response_class=HTMLResponse)
