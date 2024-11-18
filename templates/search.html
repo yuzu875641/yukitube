@@ -32,7 +32,7 @@
                         {% if result["type"] == "video" %}
                         <a style="width:100%" href="/watch?v={{ result['id'] }}">
                             <div class="thumbnail">
-                                <img loading="lazy" class="thumbnail" src="{% if proxy == "True" %}/thumbnail?v={{ result['id'] }}{% else %}https://img.youtube.com/vi/{{ result['id'] }}/0.jpg{% endif %}" onerror="document.cookie = 'proxy=True;max-age=2592000;';">
+                                <img loading="lazy" class="thumbnail" src="/thumbnail?v={{ result['id'] }}" onerror="document.cookie = 'proxy=True;max-age=2592000;';">
                                 <p class="length">{{result["length"]}}</p>
                             </div>
                             <p dir="auto">{{ result['title'] }}</p>
@@ -48,15 +48,15 @@
                         {% elif result["type"] == "channel" %}
                             <a href="/channel/{{result["id"]}}">
                                     <center>
-                                        <img loading="lazy" tabindex="-1" style="width:56.25%" src="{{result["thumbnail"]}}">
+                                        <img loading="lazy" tabindex="-1" style="width:56.25%" src="{{result['thumbnail']}}">
                                     </center>
                                 <p dir="auto">{{result["author"]}}</p>
                             </a>
                         {% elif result["type"] == "playlist" %}
-                        <a style="width:100%" href="/playlist?list={{result["id"]}}">
+                        <a style="width:100%" href="/playlist?list={{result['id']}}">
                 
                             <div class="thumbnail">
-                                <img loading="lazy" tabindex="-1" class="thumbnail" src="{% if proxy == "True" %}/thumbnail?v={{ result['thumbnail'] }}{% else %}https://img.youtube.com/vi/{{ result['thumbnail'] }}/0.jpg{% endif %}">
+                                <img loading="lazy" tabindex="-1" class="thumbnail" src="/thumbnail?v={{ result['thumbnail'] }}">
                                 <p class="length">{{result["count"]}}個の動画</p>
                             </div>
                         <p dir="auto">{{result["title"]}}</p>
