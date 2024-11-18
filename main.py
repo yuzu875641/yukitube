@@ -306,7 +306,7 @@ def page(request: Request,__):
     return template("APIwait.html",{"request": request},status_code=500)
 
 @app.exception_handler(404)
-def not_found_error(req: Request,__):
+def not_found_error(request: Request, exc:HTTPException):
     return template("404.html",{"request": request},status_code=404)
 
 @app.exception_handler(APItimeoutError)
