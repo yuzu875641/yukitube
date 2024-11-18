@@ -140,7 +140,7 @@ def get_playlist(listid,page):
 def get_playlist_info(listid):
     response = apirequest(r"/api/v1/playlists/" + urllib.parse.quote(listid) + "/")
     data = json.loads(response)
-    return {"name": data["title"],"author": data["author"]}
+    return {"name": data["title"],"author": data["author"],"authorId": data["authorId"]}
 
 def get_comments(videoid):
     t = json.loads(apicommentsrequest(r"api/v1/comments/"+ urllib.parse.quote(videoid)+"?hl=jp"))["comments"]
