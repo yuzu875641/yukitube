@@ -227,7 +227,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
 
 @app.get("/channel/{channelid}/shorts", response_class=HTMLResponse)
 def mizissou(request: Request, channelid: str):
-    return templates.TemplateResponse("mizissou.html", {"request": request, "channelid": channelid})
+    return template("mizissou.html", {"request": request, "channelid": channelid})
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
