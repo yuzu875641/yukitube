@@ -46,15 +46,13 @@
             </div>
             <hr>
             <div id="channel-menu">
-                <a id="v">動画</a>
+                <p>動画</p>
                 <a id="sh">ショート</a>
                 <a id="pl">プレイリスト</a>
                 <script>
                     var pathname = location.pathname;
-                    var v = document.getElementById("v");
                     var sh = document.getElementById("sh");
                     var pl = document.getElementById("pl");
-                    v.href = `${pathname}`;
                     sh.href = `${pathname}/shorts`;
                     pl.href = `${pathname}/playlists`;
                 </script> 
