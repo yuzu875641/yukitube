@@ -164,7 +164,7 @@ def check_cokie(cookie):
 
 
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi import Response,Cookie,Request
 from fastapi.responses import HTMLResponse,PlainTextResponse
 from fastapi.responses import RedirectResponse as redirect
@@ -172,7 +172,6 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Union
-
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/css", StaticFiles(directory="./css"), name="static")
@@ -225,9 +224,9 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     t = get_channel(channelid)
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
 
-@app.get("/channel/{channelid}/shorts", response_class=HTMLResponse)
-def mizissou(request: Request, channelid: str):
-    return template("mizissou.html", {"request": request, "channelid": channelid})
+@app.exception_handler(404)
+def error_404(request: Request):
+    return template("404.html", {"request": request})
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
