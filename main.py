@@ -134,13 +134,6 @@ def get_channel_videos(channelid):
     print(t)
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
 
-def get_channel_playlists(channelid):
-    global logs
-    i = get_channel(channelid)
-    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/playlists"))
-    print(t)
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t["playlists"]],{"channelname":i["author"],"channelicon":i["authorThumbnails"][-1]["url"],"channelprofile":i["descriptionHtml"]}]
-
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
     return [{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t]
@@ -237,13 +230,13 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     t = get_channel(channelid)
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
 
-@app.get("/channel/{channelid}/playlists", response_class=HTMLResponse)
+@app.get("/channel/{channelid}/videos", response_class=HTMLResponse)
 def channel_playlists(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    t = get_channel_playlists(channelid)
-    return template("channel_playlists.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
+    t = get_channel_videos(channelid)
+    return template("channel_videos.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
