@@ -237,7 +237,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     t = get_channel(channelid)
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
 
-@app.get("/channel/{channelid}/shorts", resonse_class=HTMLResponse)
+@app.get("/channel/{channelid}/shorts", response_class=HTMLResponse)
 def channel_shorts(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None,proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
@@ -245,7 +245,7 @@ def channel_shorts(channelid:str,response: Response,request: Request,yuki: Union
     t = get_channel_shorts(channelid)
     return template("channel_shorts.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
 
-@app.get("/channel/{channelid}/playlists", resonse_class=HTMLResponse)
+@app.get("/channel/{channelid}/playlists", response_class=HTMLResponse)
 def channel_shorts(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None,proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
