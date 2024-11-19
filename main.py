@@ -130,7 +130,7 @@ def get_channel(channelid):
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
     return [{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t]
-_
+
 def get_playlist_info(listid):
     response = apirequest(r"/api/v1/playlists/" + urllib.parse.quote(listid) + "/")
     data = json.loads(response)
