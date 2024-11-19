@@ -127,19 +127,26 @@ def get_channel(channelid):
         raise APItimeoutError("APIエラー")
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
 
+def get_channel_videos(channelid):
+    global logs
+    n = get_channel(channelid)
+    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/videos"))
+    print(t)
+    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
+
 def get_channel_shorts(channelid):
     global logs
-    i = get_channel(channelid)
+    n = get_channel(channelid)
     t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/shorts"))
     print(t)
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":i["author"],"channelicon":i["authorThumbnails"][-1]["url"],"channelprofile":i["descriptionHtml"]}]
+    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
 
 def get_channel_playlists(channelid):
     global logs
     i = get_channel(channelid)
     t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/playlists"))
     print(t)
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t["latestplaylists"]],{"channelname":i["author"],"channelicon":i["authorThumbnails"][-1]["url"],"channelprofile":i["descriptionHtml"]}]
+    return [[{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t["playlists"]],{"channelname":i["author"],"channelicon":i["authorThumbnails"][-1]["url"],"channelprofile":i["descriptionHtml"]}]
 
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
