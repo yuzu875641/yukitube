@@ -119,22 +119,17 @@ def get_search(q,page):
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apichannelrequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)))
-    if t["latestVideos"] == []:
-        print("APIがチャンネルを返しませんでした")
-        apichannels.append(apichannels[0])
-        apichannels.remove(apichannels[0])
-        raise APItimeoutError("APIエラー")
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
+    t = json.loads(apichannelrequest(r"api/v1/channels/"+ urllib.parse.quote(channelid))
+    u = get_channel_videos(channelid)
+    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in u["videos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
 
 def get_channel_videos(channelid):
     global logs
-    n = get_channel(channelid)
     t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/videos"))
     print(t)
     if t["videos"] == []:
         raise APItimeoutError("APIエラー")
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
+    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]]}]
 
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
