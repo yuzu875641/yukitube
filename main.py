@@ -134,13 +134,6 @@ def get_channel_videos(channelid):
     print(t)
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
 
-def get_channel_shorts(channelid):
-    global logs
-    n = get_channel(channelid)
-    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/shorts"))
-    print(t)
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
-
 def get_channel_playlists(channelid):
     global logs
     i = get_channel(channelid)
