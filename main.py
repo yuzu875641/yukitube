@@ -132,6 +132,8 @@ def get_channel_videos(channelid):
     n = get_channel(channelid)
     t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/videos"))
     print(t)
+    if t["videos"] == []:
+        raise APItimeoutError("APIエラー")
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
 
 def get_playlist(listid,page):
