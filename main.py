@@ -134,13 +134,6 @@ def get_channel_videos(channelid):
     print(t)
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
 
-def get_channel_shorts(channelid):
-    global logs
-    n = get_channel(channelid)
-    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/shorts"))
-    print(t)
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]],{"channelname":n["author"],"channelicon":n["authorThumbnails"][-1]["url"],"channelprofile":n["descriptionHtml"]}]
-
 def get_channel_playlists(channelid):
     global logs
     i = get_channel(channelid)
@@ -337,13 +330,13 @@ def home():
     url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
 
-@app.exception_handler(500)
-def page(request: Request,__):
-    return template("APIwait.html",{"request": request},status_code=500)
-
 @app.exception_handler(404)
 def not_found_error(request: Request, exc:HTTPException):
     return template("404.html",{"request": request},status_code=404)
+
+@app.exception_handler(500)
+def page(request: Request,__):
+    return template("APIwait.html",{"request": request},status_code=500)
 
 @app.exception_handler(APItimeoutError)
 def APIwait(request: Request,exception: APItimeoutError):
