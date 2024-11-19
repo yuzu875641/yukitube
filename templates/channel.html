@@ -44,20 +44,7 @@
                     <p><span style="white-space:pre-wrap">{{channelprofile | safe}}</span></p>
                 </div>
             </div>
-            <hr>
-            <div id="channel-menu">
-                <p>動画</p>
-                <a id="sh">ショート</a>
-                <a id="pl">プレイリスト</a>
-                <script>
-                    var pathname = location.pathname;
-                    var sh = document.getElementById("sh");
-                    var pl = document.getElementById("pl");
-                    sh.href = `${pathname}/shorts`;
-                    pl.href = `${pathname}/playlists`;
-                </script> 
-            </div>
-            <hr>
+            <hr> 
             <h3>動画</h3>
             <div class="pure-g">
                 {% for result in results %}
