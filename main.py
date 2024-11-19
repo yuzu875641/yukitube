@@ -119,17 +119,19 @@ def get_search(q,page):
 
 def get_channel(channelid):
     global apichannels
-    t = json.loads(apichannelrequest(r"api/v1/channels/"+ urllib.parse.quote(channelid))
-    u = get_channel_videos(channelid)
-    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in u["videos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
-
-def get_channel_videos(channelid):
-    global logs
-    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/videos"))
-    print(t)
-    if t["videos"] == []:
+    t = json.loads(apichannelrequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)))
+    if t["latestVideos"] == []:
+        print("APIがチャンネルを返しませんでした")
+        apichannels.append(apichannels[0])
+        apichannels.remove(apichannels[0])
         raise APItimeoutError("APIエラー")
-    return [{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["videos"]]
+    return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
+
+def get_channel_shorts(channelid):
+    global logs
+    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/shorts"))
+    print(t)
+    return [{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["recommendedVideos"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]
 
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
@@ -227,14 +229,6 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
     t = get_channel(channelid)
     return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
 
-@app.get("/channel/{channelid}/videos", response_class=HTMLResponse)
-def channel_playlists(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
-    if not(check_cokie(yuki)):
-        return redirect("/")
-    response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    t = get_channel_videos(channelid)
-    return template("channel_videos.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
-
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
     t = get_level(q)
@@ -312,13 +306,13 @@ def home():
     url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
 
-@app.exception_handler(404)
-def not_found_error(request: Request, exc:HTTPException):
-    return template("404.html",{"request": request},status_code=404)
-
 @app.exception_handler(500)
 def page(request: Request,__):
     return template("APIwait.html",{"request": request},status_code=500)
+
+@app.exception_handler(404)
+def not_found_error(request: Request, exc:HTTPException):
+    return template("404.html",{"request": request},status_code=404)
 
 @app.exception_handler(APItimeoutError)
 def APIwait(request: Request,exception: APItimeoutError):
