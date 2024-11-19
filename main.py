@@ -127,16 +127,10 @@ def get_channel(channelid):
         raise APItimeoutError("APIエラー")
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
 
-def get_channel_shorts(channelid):
-    global logs
-    t = json.loads(apirequest(r"api/v1/channels/"+ urllib.parse.quote(channelid)+ "/shorts"))
-    print(t)
-    return [{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["recommendedVideos"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]
-
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
     return [{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t]
-
+_
 def get_playlist_info(listid):
     response = apirequest(r"/api/v1/playlists/" + urllib.parse.quote(listid) + "/")
     data = json.loads(response)
