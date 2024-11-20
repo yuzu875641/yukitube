@@ -70,11 +70,11 @@
                     <a href="/watch?v={{ re['id'] }}">
 
                         <div class="thumbnail">
-                            <img loading="lazy" class="thumbnail" src="/thumbnail?v={{ re['id']}}">
+                            <img loading="lazy" class="thumbnail" src="/thumbnail?v={{ re['id']}">
                         </div>
                         <p style="width:100%">{{re["title"]}}</p>
                     </a><br>
-                    <!-- <a href="/channel/{{re['authorId']}}">{{re["author"]}}</a> -->
+                    <a href="/channel/{{re['authorId']}}">{{re["author"]}}</a>{% endfor %}
                 </div>
             </div>
         </div>
@@ -83,10 +83,13 @@
     <script>
         document.cookie = "yuki=True;max-age=2592000;";
         function getCookie(name) { let matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)")); return matches ? decodeURIComponent(matches[1]) : undefined; }
+        //document.getElementById("autonext").checked = getCookie("autonext");
         function checkautoplay(){document.cookie = "autonext="+document.getElementById("autonext").checked+";max-age=2592000;";}
         document.getElementById("loop").checked = getCookie("loop");
         document.getElementById("player").loop = document.getElementById("loop").checked;
         function changeloop(){document.cookie = "autonext="+document.getElementById("loop").checked+";max-age=2592000;";document.getElementById("player").loop = document.getElementById("loop").checked}
+        //function sleep(waitMsec) {var startMsec = new Date();while (new Date() - startMsec < waitMsec);}
+        //function autopage(){if (document.getElementById('autonext').checked) {sleep(5000);document.cookie = "autonext=true;max-age=2592000;";location.href = "/watch?v={{res[0]["id"]}}";}else{document.cookie = "autonext=false;max-age=2592000;";}}
         function getUrlQueries() { var queryStr = window.location.search.slice(1); queries = {}; queryStr.split('&').forEach(function (queryStr) { var queryArr = queryStr.split('='); queries[queryArr[0]] = queryArr[1]; }); return queries; }
         if (typeof getUrlQueries().t === "undefined") { t = 0; } else { document.getElementById("player").currentTime = getUrlQueries().t; }
         var xhr = new XMLHttpRequest();
