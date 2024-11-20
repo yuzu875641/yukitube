@@ -10,7 +10,7 @@ from cache import cache
 
 max_api_wait_time = 3
 max_time = 10
-apis = [f"https://invidious.catspeed.cc/",f"https://youtube.privacyplz.org/",r"https://invidious.jing.rocks/",r"https://inv.nadeko.net/",r"https://invidious.nerdvpn.de/",r"https://invidious.privacyredirect.com/",r"https://youtube.076.ne.jp/",r"https://vid.puffyan.us/",r"https://inv.riverside.rocks/",r"https://invidio.xamh.de/",r"https://y.com.sb/",r"https://invidious.sethforprivacy.com/",r"https://invidious.tiekoetter.com/",r"https://inv.bp.projectsegfau.lt/",r"https://inv.vern.cc/",r"https://invidious.nerdvpn.de/",r"https://inv.privacy.com.de/",r"https://invidious.rhyshl.live/",r"https://invidious.slipfox.xyz/",r"https://invidious.weblibre.org/",r"https://invidious.namazso.eu/",f"https://yewtu.be"]
+apis = [f"https://invidious.catspeed.cc/",f"https://youtube.privacyplz.org/",r"https://invidious.jing.rocks/",r"https://inv.nadeko.net/",r"https://invidious.nerdvpn.de/",r"https://invidious.privacyredirect.com/",r"https://youtube.076.ne.jp/",r"https://vid.puffyan.us/",r"https://inv.riverside.rocks/",r"https://invidio.xamh.de/",r"https://y.com.sb/",r"https://invidious.sethforprivacy.com/",r"https://invidious.tiekoetter.com/",r"https://inv.bp.projectsegfau.lt/",r"https://inv.vern.cc/",r"https://invidious.nerdvpn.de/",r"https://inv.privacy.com.de/",r"https://invidious.rhyshl.live/",r"https://invidious.slipfox.xyz/",r"https://invidious.weblibre.org/",r"https://invidious.namazso.eu/"]
 url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 version = "1.0"
 
@@ -100,9 +100,7 @@ def get_info(request):
 def get_data(videoid):
     global logs
     t = json.loads(apirequest(r"api/v1/videos/"+ urllib.parse.quote(videoid)))
-    if not t["type"] == "video":
-        raise APItimeoutError("APIエラー")
-    return [[{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["re"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]]
+    return [{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["recommendedVideos"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]
 
 def get_search(q,page):
     global logs
@@ -126,17 +124,12 @@ def get_channel(channelid):
         print("APIがチャンネルを返しませんでした")
         apichannels.append(apichannels[0])
         apichannels.remove(apichannels[0])
-        raise APItimeoutError("APIエラー")
+        raise APItimeoutError("APIがチャンネルを返しませんでした")
     return [[{"title":i["title"],"id":i["videoId"],"authorId":t["authorId"],"author":t["author"],"published":i["publishedText"],"type":"video"} for i in t["latestVideos"]],{"channelname":t["author"],"channelicon":t["authorThumbnails"][-1]["url"],"channelprofile":t["descriptionHtml"]}]
 
 def get_playlist(listid,page):
     t = json.loads(apirequest(r"/api/v1/playlists/"+ urllib.parse.quote(listid)+"?page="+urllib.parse.quote(page)))["videos"]
     return [{"title":i["title"],"id":i["videoId"],"authorId":i["authorId"],"author":i["author"],"type":"video"} for i in t]
-
-def get_playlist_info(listid):
-    response = apirequest(r"/api/v1/playlists/" + urllib.parse.quote(listid) + "/")
-    data = json.loads(response)
-    return {"name": data["title"],"author": data["author"],"authorId": data["authorId"]}
 
 def get_comments(videoid):
     t = json.loads(apicommentsrequest(r"api/v1/comments/"+ urllib.parse.quote(videoid)+"?hl=jp"))["comments"]
@@ -165,7 +158,7 @@ def check_cokie(cookie):
 
 
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends
 from fastapi import Response,Cookie,Request
 from fastapi.responses import HTMLResponse,PlainTextResponse
 from fastapi.responses import RedirectResponse as redirect
@@ -174,6 +167,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Union
 
+
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app.mount("/css", StaticFiles(directory="./css"), name="static")
 app.mount("/word", StaticFiles(directory="./blog", html=True), name="static")
@@ -181,6 +175,8 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 from fastapi.templating import Jinja2Templates
 template = Jinja2Templates(directory='templates').TemplateResponse
+
+
 
 
 
@@ -201,14 +197,14 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
     videoid = v
     t = get_data(videoid)
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":True})
+    return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":proxy})
 
 @app.get("/search", response_class=HTMLResponse,)
 def search(q:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template("search.html", {"request": request,"results":get_search(q,page),"word":q,"next":f"/search?q={q}&page={page + 1}","proxy":True})
+    return template("search.html", {"request": request,"results":get_search(q,page),"word":q,"next":f"/search?q={q}&page={page + 1}","proxy":proxy})
 
 @app.get("/hashtag/{tag}")
 def search(tag:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None)):
@@ -223,7 +219,7 @@ def channel(channelid:str,response: Response,request: Request,yuki: Union[str] =
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     t = get_channel(channelid)
-    return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":True})
+    return template("channel.html", {"request": request,"results":t[0],"channelname":t[1]["channelname"],"channelicon":t[1]["channelicon"],"channelprofile":t[1]["channelprofile"],"proxy":proxy})
 
 @app.get("/answer", response_class=HTMLResponse)
 def set_cokie(q:str):
@@ -239,7 +235,7 @@ def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1
     if not(check_cokie(yuki)):
         return redirect("/")
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    return template("playlist.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":True,"playlist_info":get_playlist_info(list)})
+    return template("search.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy})
 
 @app.get("/info", response_class=HTMLResponse)
 def viewlist(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
@@ -305,10 +301,6 @@ def home():
 @app.exception_handler(500)
 def page(request: Request,__):
     return template("APIwait.html",{"request": request},status_code=500)
-
-@app.exception_handler(404)
-def not_found_error(request: Request, exc:HTTPException):
-    return template("404.html",{"request": request},status_code=404)
 
 @app.exception_handler(APItimeoutError)
 def APIwait(request: Request,exception: APItimeoutError):
