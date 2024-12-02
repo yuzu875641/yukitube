@@ -29,9 +29,14 @@
             <div class="pure-g h-box">
                 <div class="pure-u-2-3">
                     <div class="channel-profile">
-                        <h1 style="color: #ff0000 ;">404</h1>
-                        <p>未実装か、サイトのアドレスが間違っています。</p><br>
+                        <h1 style="color: #ff0000 ;">{{ status_code }}</h1>
+                        <p>{{ message }}</p><br>
+
+                        {% if home %}
                         <a href="/">ホーム</a><br>
+                        {% else %}
+                        <a onclick="reload()">再読み込み</a>
+                        {% endif %}
                     </div>
                 </div>
                 
@@ -46,6 +51,11 @@
             response(JSON.parse(xhr.responseText));
         }
         xhr.send();
-    }},delay:300});</script>
+    }},delay:300});
+
+    function reload() {
+        location.reload();
+    }
+    </script>
 </body>
 </html>
