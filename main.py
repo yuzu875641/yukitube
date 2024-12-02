@@ -102,7 +102,7 @@ def get_data(videoid):
     global logs
     t = json.loads(apirequest(r"api/v1/videos/"+ urllib.parse.quote(videoid)))
     res = requests.get(t["formatStreams"][0])
-    if (res == "")
+    if (res == ""):
         return "error"
     return [{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["recommendedVideos"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]
 
@@ -200,7 +200,7 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
     response.set_cookie(key="yuki", value="True",max_age=7*24*60*60)
     videoid = v
     t = get_data(videoid)
-    if (t == error)
+    if (t == error):
             return template("404.html",{"request": request,"error": "ビデオ取得エラー"},status_code=400)
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":proxy})
