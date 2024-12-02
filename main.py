@@ -39,6 +39,7 @@ def apirequest(url):
         try:
             res = requests.get(api+url,timeout=max_api_wait_time)
             if res.status_code == 200 and is_json(res.text):
+                print(api+url)
                 return res.text
             else:
                 print(f"エラー:{api}")
@@ -100,6 +101,9 @@ def get_info(request):
 def get_data(videoid):
     global logs
     t = json.loads(apirequest(r"api/v1/videos/"+ urllib.parse.quote(videoid)))
+    res = requests.get(t["formatStreams"][0])
+    if (res === "")
+        return "error"
     return [{"id":i["videoId"],"title":i["title"],"authorId":i["authorId"],"author":i["author"]} for i in t["recommendedVideos"]],list(reversed([i["url"] for i in t["formatStreams"]]))[:2],t["descriptionHtml"].replace("\n","<br>"),t["title"],t["authorId"],t["author"],t["authorThumbnails"][-1]["url"]
 
 def get_search(q,page):
@@ -196,8 +200,9 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
     response.set_cookie(key="yuki", value="True",max_age=7*24*60*60)
     videoid = v
     t = get_data(videoid)
+    if (t == error)
+            return template("404.html",{"request": request,"error": "ビデオ取得エラー"},status_code=400)
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
-    print(t[1])
     return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":proxy})
 
 @app.get("/search", response_class=HTMLResponse,)
@@ -297,6 +302,9 @@ def home():
     global url
     url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
+@app.exception_handler(400)
+def notfounderror(request: Request,__):
+    return template("404.html",{"request": request},status_code=400)
 
 @app.exception_handler(500)
 def page(request: Request,__):
