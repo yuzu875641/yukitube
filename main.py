@@ -302,7 +302,7 @@ def home():
     global url
     url = requests.get(r'https://raw.githubusercontent.com/mochidukiyukimi/yuki-youtube-instance/main/instance.txt').text.rstrip()
 
-@app.exception_handler(400)
+@app.exception_handler(404)
 def notfounderror(request: Request,__):
     return template("404.html",{"request": request},status_code=400)
 
