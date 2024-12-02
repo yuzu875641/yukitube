@@ -197,6 +197,7 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
     videoid = v
     t = get_data(videoid)
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
+    print(t[1])
     return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":proxy})
 
 @app.get("/search", response_class=HTMLResponse,)
@@ -211,7 +212,6 @@ def search(tag:str,response: Response,request: Request,page:Union[int,None]=1,yu
     if not(check_cokie(yuki)):
         return redirect("/")
     return redirect(f"/search?q={tag}")
-
 
 @app.get("/channel/{channelid}", response_class=HTMLResponse)
 def channel(channelid:str,response: Response,request: Request,yuki: Union[str] = Cookie(None),proxy: Union[str] = Cookie(None)):
