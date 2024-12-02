@@ -201,7 +201,7 @@ def video(v:str,response: Response,request: Request,yuki: Union[str] = Cookie(No
     videoid = v
     t = get_data(videoid)
     if (t == "error"):
-            return template("404.html",{"request": request,"message": "ビデオ取得エラー","home":False},status_code=400)
+            return template("404.html",{"request": request,"status_code":"500 - VideoGettingError","message": "ビデオ取得エラー、再読み込みしてください。","home":False},status_code=400)
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     return template('video.html', {"request": request,"videoid":videoid,"videourls":t[1],"res":t[0],"description":t[2],"videotitle":t[3],"authorid":t[4],"authoricon":t[6],"author":t[5],"proxy":proxy})
 
@@ -304,11 +304,11 @@ def home():
 
 @app.exception_handler(404)
 def notfounderror(request: Request,__):
-    return template("404.html",{"request": request},status_code=400)
+    return template("404.html",{"request": request,"status_code":"404 - NotFound","message":"未実装か、存在しないページです。","home":True},status_code=400)
 
 @app.exception_handler(500)
 def page(request: Request,__):
-    return template("APIwait.html",{"request": request,"message":"未実装か、存在しないページです。","home":True},status_code=500)
+    return template("APIwait.html",{"request": request},status_code=500)
 
 @app.exception_handler(APItimeoutError)
 def APIwait(request: Request,exception: APItimeoutError):
