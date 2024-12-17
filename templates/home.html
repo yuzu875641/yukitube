@@ -20,6 +20,7 @@
             <div class="pure-u-1" id="logo">
                 <h1 href="/" class="pure-menu-heading">Yuki Youtube</h1>
                 <p style="text-align: center;">necolian非公式改造版</p>
+                <p style="text-align: center;">v2.2.0</p>
                 <p style="text-align: center;">新機能追加中! <a href="https://github.com/necolian/yukitube-ex">このyukiのgithub</a></p>
                 
                 
@@ -33,7 +34,7 @@
             </div>
             <div class="pure-u-1-4"></div>
             <div class="pure-u-1 pure-u-md-12-24 searchbar">
-                <form class="pure-form" action="/search" method="get">
+                <form id="searchForm" class="pure-form" action="/search" method="get">
                     <fieldset>
                         <input type="search" id="searchbox" autocomplete="on" autocorrect="on" autocapitalize="none" spellcheck="false" autofocus="" name="q" placeholder="検索" title="検索" value="">
                     </fieldset>
@@ -42,17 +43,30 @@
             <div class="pure-u-1-4"></div>
             
         </div>
-        <script>$('#searchbox').autocomplete({
-            source: function (request, response) {
-                {
-            var url = "/suggest?keyword="+ request.term
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", url);
-            xhr.onload = function() {
-                response(JSON.parse(xhr.responseText));
-            }
-            xhr.send();
-        }},delay:300});</script>
+        <script>
+            $('#searchbox').autocomplete({
+                source: function (request, response) {
+                    {
+                        var url = "/suggest?keyword="+ request.term
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("GET", url);
+                        xhr.onload = function() {
+                            response(JSON.parse(xhr.responseText));
+                        }
+                        xhr.send();
+                    }
+                },
+    　　　　　    select: function(event, ui) {
+                        // 候補が選択されたときの処理
+                        // テキストボックスに選択したアイテムをセット
+                        $("#searchbox").val(ui.item.value);
+                        // フォームを送信
+                        $("#searchForm").submit(); // フォームを送信
+                        return false; // jQuery UIのデフォルトの動作をキャンセル
+                },
+    　　　　　    delay: 300
+            });
+        </script>
     </body>
 
 </html>
