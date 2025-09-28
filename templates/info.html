@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,8 +8,92 @@
     <link rel="stylesheet" href="/css/ionicons.min.css">
     <link rel="stylesheet" href="/css/default.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+        .h-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .navbar {
+            align-items: center;
+        }
+        .title-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .title-container h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .title-container p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+        .searchbar {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        #searchbox {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+        #searchbox:focus {
+            background-color: #383838;
+            outline: none;
+        }
+        #contents {
+            text-align: center;
+        }
+        #contents h3 {
+            color: #e0e0e0;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        #contents p {
+            color: #a0a0a0;
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+        .ui-menu {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            border-radius: 8px;
+            padding: 5px;
+        }
+        .ui-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .ui-menu-item-wrapper:hover {
+            background-color: #383838;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body class="no-theme">
     <span style="display:none" id="dark_mode_pref"></span>
@@ -19,8 +102,8 @@
         <div class="pure-u-1 pure-u-md-20-24" id="contents">
             <div class="pure-g navbar h-box" style="align-items: center;">
                 <div class="pure-u-1 pure-u-md-12-24 title-container">
-                    <h2 style="text-align:center; color: #565d64;"><a href="/" style="text-decoration:none;">Yuki Youtube</a></h2>
-                    <p style="text-align:center; color: #565d64;">ゆず改造インスタンス</p>
+                    <h2 style="text-align:center;"><a href="/" style="text-decoration:none; color: #fff;">Yuki Youtube</a></h2>
+                    <p style="text-align:center;">ゆず改造インスタンス</p>
                 </div>
                 <div class="pure-u-1 pure-u-md-12-24 searchbar">
                     <form id="searchForm" class="pure-form" action="/search" method="get">
@@ -32,15 +115,14 @@
             </div>
             <div class="pure-g h-box">
                 <div class="pure-u-2-3">
-
                     <h3>情報 - 現在のapiサーバー</h3><br>
                     <p>Youtube-API:{{Youtube_API}}</p><br>
                     <p>Channel-API:{{Channel_API}}</p><br>
                     <p>Comments-API:{{Comments_API}}</p><br>
-                    
                 </div>
-                
-            </div>      
+            </div>
+        </div>
+    </div>
     <script>$('#searchbox').autocomplete({
                 source: function (request, response) {
                     {
@@ -54,12 +136,9 @@
                     }
                 },
     　　　　　    select: function(event, ui) {
-                        // 候補が選択されたときの処理
-                        // テキストボックスに選択したアイテムをセット
                         $("#searchbox").val(ui.item.value);
-                        // フォームを送信
-                        $("#searchForm").submit(); // フォームを送信
-                        return false; // jQuery UIのデフォルトの動作をキャンセル
+                        $("#searchForm").submit();
+                        return false;
                 },
     　　　　　    delay: 300
             });
@@ -72,4 +151,3 @@
     </script>
 </body>
 </html>
-
