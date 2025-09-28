@@ -301,6 +301,14 @@ def playlist(list:str,response: Response,request: Request,page:Union[int,None]=1
     response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
     return template("search.html", {"request": request,"results":get_playlist(list,str(page)),"word":"","next":f"/playlist?list={list}","proxy":proxy})
 
+@app.get("/info", response_class=HTMLResponse)
+def viewlist(response: Response,request: Request,yuki: Union[str] = Cookie(None)):
+    global apis,apichannels,apicomments
+    if not(check_cokie(yuki)):
+        return redirect("/")
+    response.set_cookie("yuki","True",max_age=60 * 60 * 24 * 7)
+    return template("info.html",{"request": request,"Youtube_API":apis[0],"Channel_API":apichannels[0],"Comments_API":apicomments[0]})
+
 @app.get("/suggest")
 def suggest(keyword:str):
     return [i[0] for i in json.loads(requests.get(r"http://www.google.com/complete/search?client=youtube&hl=ja&ds=yt&q="+urllib.parse.quote(keyword)).text[19:-1])[1]]
