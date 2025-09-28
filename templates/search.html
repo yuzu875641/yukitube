@@ -10,13 +10,21 @@
 
     <link rel="stylesheet" href="/css/pure-min.css">
 
+    <script type="text/javascript">
+
+    window.onload = function onLoad() {
+
+      document.cookie = "yuki=True; max-age=31536000;path=/";
+
+    }
+
+  </script>
+
     <link rel="stylesheet" href="/css/grids-responsive-min.css">
 
     <link rel="stylesheet" href="/css/ionicons.min.css">
 
     <link rel="stylesheet" href="/css/default.css">
-
-    <link rel="stylesheet" href="/css/title.css">
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
 
@@ -36,19 +44,11 @@
 
         <div class="pure-u-1 pure-u-md-20-24" id="contents">
 
-            <div class="pure-g navbar h-box" style="align-items: center;">
-
-                <div class="pure-u-1 pure-u-md-12-24 title-container">
-
-                    <h2 style="text-align:center; color: #565d64;"><a href="/" style="text-decoration:none;">Yuki Youtube</a></h2>
-
-                    <p style="text-align:center; color: #565d64;">necolian非公式改造版</p>
-
-                </div>
+            <div class="pure-g navbar h-box">
 
                 <div class="pure-u-1 pure-u-md-12-24 searchbar">
 
-                    <form id="searchForm" class="pure-form" action="/search" method="get">
+                    <form class="pure-form" action="/search" method="get">
 
                         <fieldset>
 
@@ -61,8 +61,6 @@
                 </div>
 
             </div>
-
-            <br style="line-height: 50%">
 
             <div class="pure-g">
 
@@ -78,7 +76,7 @@
 
                             <div class="thumbnail">
 
-                                <img loading="lazy" class="thumbnail" src="/thumbnail?v={{ result['id'] }}" onerror="document.cookie = 'proxy=True;max-age=2592000;';">
+                                <img loading="lazy" class="thumbnail" src="{% if proxy == "True" %}/thumbnail?v={{ result['id'] }}{% else %}https://img.youtube.com/vi/{{ result['id'] }}/0.jpg{% endif %}" onerror="document.cookie = 'proxy=True;max-age=2592000;';">
 
                                 <p class="length">{{result["length"]}}</p>
 
@@ -98,7 +96,7 @@
 
                             <div class="flex-left">
 
-                                <p class="video-data" dir="auto">{{result["published"]}}</p>
+                                    <p class="video-data" dir="auto">{{result["published"]}}</p>
 
                             </div>
 
@@ -106,33 +104,35 @@
 
                         {% elif result["type"] == "channel" %}
 
-                        <a href="/channel/{{result["id"]}}">
+                            <a href="/channel/{{result["id"]}}">
 
-                            <center>
+                                    <center>
 
-                                <img loading="lazy" tabindex="-1" style="width:56.25%" src="{{result['thumbnail']}}">
+                                        <img loading="lazy" tabindex="-1" style="width:56.25%" src="{{result["thumbnail"]}}">
 
-                            </center>
+                                    </center>
 
-                            <p dir="auto">{{result["author"]}}</p>
+                                <p dir="auto">{{result["author"]}}</p>
 
-                        </a>
+                            </a>
 
                         {% elif result["type"] == "playlist" %}
 
-                        <a style="width:100%" href="/playlist?list={{result['id']}}">
+                        <a style="width:100%" href="/playlist?list={{result["id"]}}">
+
+                
 
                             <div class="thumbnail">
 
-                                <img loading="lazy" tabindex="-1" class="thumbnail" src="/thumbnail?v={{ result['thumbnail'] }}">
+                                <img loading="lazy" tabindex="-1" class="thumbnail" src="{% if proxy == "True" %}/thumbnail?v={{ result['thumbnail'] }}{% else %}https://img.youtube.com/vi/{{ result['thumbnail'] }}/0.jpg{% endif %}">
 
                                 <p class="length">{{result["count"]}}個の動画</p>
 
                             </div>
 
-                            <p dir="auto">{{result["title"]}}</p>
+                        <p dir="auto">{{result["title"]}}</p>
 
-                        </a>
+                    </a>
 
                         {% endif %}
 
@@ -148,11 +148,15 @@
 
     <div class="pure-g h-box">
 
-        <div class="pure-u-1 pure-u-lg-1-5"></div>
+        <div class="pure-u-1 pure-u-lg-1-5">
+
+        </div>
 
         <div class="pure-u-1 pure-u-lg-3-5"></div>
 
         <div class="pure-u-1 pure-u-lg-1-5" style="text-align:right">
+
+
 
             <a href="{{next}}">
 
@@ -164,54 +168,28 @@
 
     </div>
 
-    <script>
+    <script>$('#searchbox').autocomplete({
 
-    $('#searchbox').autocomplete({
+        source: function (request, response) {
 
-                source: function (request, response) {
+            {
 
-                    {
+        var url = "/suggest?keyword="+ request.term
 
-                        var url = "/suggest?keyword="+ request.term
+        var xhr = new XMLHttpRequest();
 
-                        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
 
-                        xhr.open("GET", url);
+        xhr.onload = function() {
 
-                        xhr.onload = function() {
+            response(JSON.parse(xhr.responseText));
 
-                            response(JSON.parse(xhr.responseText));
+        }
 
-                        }
+        xhr.send();
 
-                        xhr.send();
-
-                    }
-
-                },
-
-    　　　　　    select: function(event, ui) {
-
-                        // 候補が選択されたときの処理
-
-                        // テキストボックスに選択したアイテムをセット
-
-                        $("#searchbox").val(ui.item.value);
-
-                        // フォームを送信
-
-                        $("#searchForm").submit(); // フォームを送信
-
-                        return false; // jQuery UIのデフォルトの動作をキャンセル
-
-                },
-
-    　　　　　    delay: 300
-
-            });
-
-    </script>
+    }},delay:300});</script>
 
 </body>
 
-                                    </html>
+</html>
