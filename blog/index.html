@@ -2,27 +2,91 @@
 <html lang="ja">
 <head>
     <meta charset='utf-8'>
-    <title>necolianの改造雪</title>
+    <title>ログイン</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 40px 60px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+        }
+        input[type="text"], input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="button"] {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .info-message {
+            color: #d9534f;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
     <script>
-        function getlevel(){
-            if(document.getElementById('word').value == "47800"){
+        function getlevel() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const infoDiv = document.getElementById('info');
+            infoDiv.textContent = "";
+
+            if (username === "ゆず" && password === "yuzu") {
                 document.cookie = "yuki=True; path=/;";
-                window.location.href = "/"
-            }else{
-                let req = new XMLHttpRequest();
-                req.addEventListener("load", function(){document.getElementById('info').textContent = this.responseText});
-                req.open("GET", "/answer?q="+document.getElementById('word').value);
-                req.send();
+                window.location.href = "/";
+            } else {
+                infoDiv.textContent = "ユーザー名またはパスワードが違います。";
             }
         }
     </script>
 </head>
 <body>
-    <div class="snow-container">
-    <img src="yuki.gif" style="z-index: -100">
+    <div class="login-container">
+        <h1>ログイン</h1>
+        <div>
+            <input id="username" type="text" placeholder="ユーザー名">
+        </div>
+        <div>
+            <input id="password" type="password" placeholder="パスワード">
+        </div>
+        <input type="button" value="確認" onClick="getlevel()">
+        <div id="info" class="info-message"></div>
     </div>
-    <p>ご要望があればお知らせを</p>
-    <input id="word" type="text"></input><input type="button" value="確認" onClick="getlevel()"></input>
-    <div id="info">
 </body>
 </html>
