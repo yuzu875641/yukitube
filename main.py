@@ -208,6 +208,7 @@ from fastapi.responses import HTMLResponse,PlainTextResponse
 from fastapi.responses import RedirectResponse as redirect
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Union
 
@@ -270,6 +271,12 @@ def search(q: str, response: Response, request: Request, page: Union[int, None] 
     except Exception as e:
         # 他の予期しない例外を処理
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/favicon.png")
+async def get_favicon():
+    # favicon.pngがプロジェクトのルートディレクトリにある場合
+    return FileResponse("favicon.png")
+
 
 @app.get("/hashtag/{tag}")
 def search(tag:str,response: Response,request: Request,page:Union[int,None]=1,yuki: Union[str] = Cookie(None)):
